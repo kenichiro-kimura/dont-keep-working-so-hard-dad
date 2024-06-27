@@ -1,36 +1,36 @@
 const { app } = require('@azure/functions');
 
 app.timer('timerTrigger', {
-    schedule: '0 */5 * * * *',
-    handler: (myTimer, context) => {
-        const schedules = getSchedules();
-        const sensorStatusHistory = getSensorsStatusHistory();
-        const lastBreak = getLastBreak();
-        const breakDuration = 5; // 休憩時間(分)
-        const workDuration = 30; // 連続作業時間(分)
-        const toNotify = getNotifyTimeToTakeBreak(schedules, sensorStatusHistory, lastBreak, workDuration, breakDuration);
-
-        context.log('Timer function processed request.');
-    }
+  schedule: '0 */5 * * * *',
+  handler: (myTimer, context) => {
+    const schedules = getSchedules();
+    const sensorStatusHistory = getSensorsStatusHistory();
+    const lastBreak = getLastBreak();
+    const breakDuration = 5; // 休憩時間(分)
+    const workDuration = 30; // 連続作業時間(分)
+    const toNotify = getNotifyTimeToTakeBreak(schedules, sensorStatusHistory, lastBreak, workDuration, breakDuration);
+    console.log(toNotify);
+    context.log('Timer function processed request.');
+  }
 });
 
 const getSchedules = () => {
-    // 今日のスケジュールを返す
-    return [];
-}
+  // 今日のスケジュールを返す
+  return [];
+};
 
 const getSensorsStatusHistory = () => {
-    // 今日のセンサーの状態を返す
-    return [];
-}
+  // 今日のセンサーの状態を返す
+  return [];
+};
 
 const getLastBreak = () => {
-    // 今日の最後の休憩時間を返す
-    return '';
-}
-/*
+  // 今日の最後の休憩時間を返す
+  return '';
+};
+
 const getNotifyTimeToTakeBreak = (schedules, sensorStatusHistory, lastBreak, workDuration, breakDuration) => {
-    /*
+  /*
     - schedules: 今日のスケジュール
       - 例: [ { start: '2024-06-05 09:00:00+09', end: '2024-06-05 18:00:00+09' } ]
     - sensorStatusHistory: 今日のセンサーの状態
@@ -44,7 +44,7 @@ const getNotifyTimeToTakeBreak = (schedules, sensorStatusHistory, lastBreak, wor
 
     - return: 通知する時間
       - 例: '2024-06-05 10:20:00+09'
-    
+
     今日のスケジュールとセンサーの状態から、次に休憩を取る時間を返す。
     ルール:
     - sensorStatusHistoryのstatusが最後に'break'になってから workDuration 分後に休憩を取る
@@ -55,6 +55,7 @@ const getNotifyTimeToTakeBreak = (schedules, sensorStatusHistory, lastBreak, wor
 
     上記のルール全てを満たす時間を返す。満たす時間がない場合はnullを返す。
     */
+};
 /*
     // sensorStatusHistoryのstatusが最後に'break'になってから workDuration 分後に休憩を取る
     let lastBreak = undefined;
@@ -66,11 +67,11 @@ const getNotifyTimeToTakeBreak = (schedules, sensorStatusHistory, lastBreak, wor
     }
 
     // もしlastBreakがundefinedなら、今日はまだ休憩を取っていないので、lastBreakは本日の日付の9:00:00とする。
-    
+
     if (lastBreak === undefined) {
         lastBreak = new Date.UTC().setHours(now.getHours() + 9).setHours(9, 0, 0, 0);
     }
-    
+
     // 次の休憩開始時刻の初期候補をlastBreak + workDurationとする
     let nextBreak = lastBreak + workDuration * 60 * 1000;
 
@@ -122,55 +123,3 @@ const getNotifyTimeToTakeBreak = (schedules, sensorStatusHistory, lastBreak, wor
     return nextBreak;
 }
 */
-
-const _getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times, compareFunction) => {
-    // sensorStatusHistoryの中でstatusがstatusである状態がtimes回以上続いた部分を探し、その最初のunixtimeと最後のunixtimeを返す
-    // times回以上続いた部分がない場合はundefinedを返す
-    let count = 0;
-    let startTime = undefined;
-    let endTime = undefined;
-    let i = 0;
-    for (i = 0; i < sensorStatusHistory.length; i++) {
-        if (compareFunction(sensorStatusHistory[i].status, status)) {
-            count++;
-            if (count >= times) {
-                startTime = sensorStatusHistory[i - times + 1].unixtime;
-                endTime = sensorStatusHistory[i].unixtime;
-                break;
-            }
-        } else {
-            count = 0;
-        }
-    }
-    // startTimeとendTimeとendTimeのインデックスを返す
-    return startTime === undefined ? undefined : { startTime, endTime, index:i };
-}
-
-const getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times, compareFunction) => {
-    const result = _getStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory, status, times, compareFunction);
-    return result === undefined ? undefined : { startTime:result.startTime, endTime:result.endTime };
-}
-
-const getLastStartTimeAndEndTime = (sensorStatusHistory, status, times, compareFunction) => {
-    // sensorStatusHistoryの中でstatusがstatusである状態がtimes回以上続いた部分を探し、その最初のunixtimeと最後のunixtimeを返す
-    // times回以上続いた部分がない場合はundefinedを返す
-    // times回以上続いた部分がある場合は、最後に見つかったシーケンスの最初と最後のunixtimeを返す
-    // sensorStatusHistoryをスライスしてgetStartTimeAndEndTimeOfSensorStatusを呼び出すことで実現する
-    let lastStartTime = undefined;
-    let lastEndTime = undefined;
-    let i = 0;
-    while (i < sensorStatusHistory.length) {
-        const result = _getStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory.slice(i), status, times, compareFunction);
-        if (result === undefined) {
-            break;
-        }
-        lastStartTime = result.startTime;
-        lastEndTime = result.endTime;
-        i += result.index;
-    }
-    return lastStartTime === undefined ? undefined : { startTime:lastStartTime, endTime:lastEndTime };
-}
-
-// getStartTimeAndEndTimeOfSensorStatusを外部のファイルで使えるようにする
-module.exports.getStartTimeAndEndTimeOfSensorStatus = getStartTimeAndEndTimeOfSensorStatus;    
-module.exports.getLastStartTimeAndEndTime = getLastStartTimeAndEndTime;
