@@ -1,1 +1,3 @@
 .vscode
+__azurite_*
+__blobstorage_*
