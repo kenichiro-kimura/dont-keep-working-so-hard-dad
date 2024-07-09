@@ -19,7 +19,8 @@ PubSubClient client = PubSubClient(net);
 char buffer[1024];
 unsigned long lastMillis = 0;
 char message[256];
-char channel[256];
+char subscribe_channel[256];
+char publish_channel[256];
 long distance = 0;
 time_t now;
 long distanceCount = 0;
@@ -221,8 +222,7 @@ void connectMqtt() {
   while(!client.connect(SENSOR_NAME)){
     delay(200);
   }
-  sprintf(channel,"devices/%s/messages/devicebound/#",SENSOR_NAME);
-  client.subscribe(channel);
+  client.subscribe(subscribe_channel);
 }
 
 void setupMqtt() {
@@ -233,6 +233,9 @@ void setupMqtt() {
 
 void setup()
 {
+  sprintf(subscribe_channel,"devices/%s/messages/devicebound/#",SENSOR_NAME);
+  sprintf(publish_channel,"devices/%s/messages/events/$.ct=application%2Fjson%3Bcharset%3Dutf-8",SENSOR_NAME);
+
   Params params;
   memset(&params, 0, sizeof(params));
 
@@ -273,7 +276,7 @@ void loop()
       distanceCount = 0;
       time(&now);
       sprintf(message,"{\"distance\": %d,\"unixTime\": %d}",distance,now);
-      client.publish("devices/SENSOR_NAME/messages/events/$.ct=application%2Fjson%3Bcharset%3Dutf-8", message);
+      client.publish(publish_channel, message);
       Serial.print("send ");
       Serial.println(message);
       distanceSum = 0;
