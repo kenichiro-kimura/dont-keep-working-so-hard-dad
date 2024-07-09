@@ -1,4 +1,4 @@
-const defaultCompareFunction = (a, b) => a === b;
+const defaultCompareFunction = (a, b) => a.status === b;
 
 const getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times, _compareFunction) => {
   // sensorStatusHistoryの中でstatusがstatusである状態がtimes回以上続いた部分を探し、その最初のunixtimeと最後のunixtimeを返す
@@ -10,12 +10,12 @@ const getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times
   let endTime;
   let i = 0;
   for (i = 0; i < sensorStatusHistory.length; i++) {
-    if (compareFunction(sensorStatusHistory[i].status, status)) {
+    if (compareFunction(sensorStatusHistory[i], status)) {
       count++;
     } else {
       if (count >= times) {
-        startTime = sensorStatusHistory[i - count].unixtime;
-        endTime = sensorStatusHistory[i - 1].unixtime;
+        startTime = sensorStatusHistory[i - count].unixTime;
+        endTime = sensorStatusHistory[i - 1].unixTime;
         break;
       }
       count = 0;
