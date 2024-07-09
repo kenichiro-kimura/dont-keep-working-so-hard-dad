@@ -1,7 +1,7 @@
 const { getStartTimeAndEndTimeOfSensorStatus, getLastStartTimeAndEndTimeOfSensorStatus } = require('../src/libs/sensorStatus');
 
 const compareIsEqual = (a, b) => {
-  return a === b;
+  return a.status === b;
 };
 
 describe('getStartTimeAndEndTimeOfSensorStatus', () => {
@@ -87,7 +87,7 @@ describe('getLastStartTimeAndEndTimeOfSensorStatus', () => {
     const status = 100;
     const times = 3;
     const expected = { startTime: 1002, endTime: 1004 };
-    const result = getStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory, status, times, (a, b) => a >= b);
+    const result = getStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory, status, times, (a, b) => a.status >= b);
     expect(result).toEqual(expected);
   });
 });

@@ -1,3 +1,4 @@
 .vscode
 __azurite_*
-__blobstorage_*
+__blobstorage__*
+__queuestorage__*
