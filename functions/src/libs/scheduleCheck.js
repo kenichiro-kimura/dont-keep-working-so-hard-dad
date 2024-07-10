@@ -75,18 +75,13 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
 
   /**
    * nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
-   * nextBreakがlastBreakから1.5 * workDuration以上経過している場合は、schedulesのスタート時刻のbreakDuration前をnextBreakの候補とするが
+   * nextBreakがlastBreakから1.5 * workDuration以上経過している場合は、schedulesのスタート時刻のworkDuration前をnextBreakの候補とするが
    * ただし、候補の時刻が現在時刻よりも前の場合は現在時刻とする
    */
   if (nextBreak - lastBreak > workDuration * 2) {
-    nextBreak = lastBreak + breakDuration;
+    nextBreak = lastBreak + workDuration;
   } else if (nextBreak - lastBreak > workDuration * 1.5) {
-    const candidate = lastBreak + workDuration;
-    if (candidate < Date.now()) {
-      nextBreak = Date.now();
-    } else {
-      nextBreak = candidate;
-    }
+    nextBreak = lastBreak + workDuration;
   }
 
   /**
