@@ -1,5 +1,6 @@
 /**
   * 今日のスケジュールとセンサーの状態から、次に休憩を取る時間を返す。
+  *
   * ルール:
   * - 最後の休憩から workDuration 分後に休憩を取る
   * - schedulesの要素のstartとendの間は休憩を取らない
@@ -72,7 +73,7 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
     }
   }
   /**
-   * nxtBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
+   * nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
    */
   if (nextBreak - lastBreak > workDuration * 2) {
     nextBreak = lastBreak + workDuration;
