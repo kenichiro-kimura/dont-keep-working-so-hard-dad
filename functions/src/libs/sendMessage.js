@@ -12,7 +12,6 @@ const sendC2DMessage = (message) => {
       console.error('Could not connect: ' + err.message);
     } else {
       console.log('Client connected');
-      // JSON.stringify({ text : 'foo' });
       const sendMessage = new Message(`${message}`);
       console.log('Sending message: ' + sendMessage.getData());
       client.send(targetDevice, sendMessage, printResultFor('send'));
