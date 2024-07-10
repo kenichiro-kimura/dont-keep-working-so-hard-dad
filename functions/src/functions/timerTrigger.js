@@ -1,5 +1,5 @@
 const { app, input } = require('@azure/functions');
-const { getNotifyTimeToTakeBreak, getLocalTimeString } = require('../libs/scheduleCheck');
+const { getNotifyTimeToTakeBreak, getLocalTimeStringRoundUpSeconds } = require('../libs/scheduleCheck');
 const { getLastStartTimeAndEndTimeOfSensorStatus } = require('../libs/sensorStatus');
 const { sendC2DMessage } = require('../libs/sendMessage');
 
@@ -50,7 +50,7 @@ app.timer('timerTrigger', {
     const workDuration = (process.env.workDuration ? process.env.workDuration : 1800) * 1000; // 連続作業時間(sec)
 
     const lastBreakTime = lastBreak !== undefined ? lastBreak.endTime : 0;
-    const toNotify = getLocalTimeString(getNotifyTimeToTakeBreak(schedules, lastBreakTime, workDuration, breakDuration));
+    const toNotify = getLocalTimeStringRoundUpSeconds(getNotifyTimeToTakeBreak(schedules, lastBreakTime, workDuration, breakDuration));
 
     console.log(`toNotify: ${toNotify}`);
     context.log('Timer function processed request.');

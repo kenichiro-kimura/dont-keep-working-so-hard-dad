@@ -1,16 +1,17 @@
-const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDuration) => {
+const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDuration, _threshold) => {
   /*
       - _schedules: 今日のスケジュール
-        - 例: [ { start: 1720429200, end: 1720431000, subject: "CSOL Team1 もくもく会" } ]
-      - lastBreak: 今日の最後の休憩時間(unix time)
-        - 例: 1720429200
+        - 例: [ { start: 1720429200000, end: 1720431000000, subject: "ミーティング" } ]
+      - lastBreak: 今日の最後の休憩時間(unix time, msec)
+        - 例: 1720429200000
       - workDuration: 連続作業時間
-        - 例: 1800 (sec)
+        - 例: 1800000 (msec)
       - breakDuration: 休憩時間
-        - 例: 300 (sec)
-
+        - 例: 300000 (msec)
+      - threshold: イベントの長さの閾値,デフォルト4時間
+        - 例: 14400000 (msec)
       - return: 通知する時間
-        - 例: 1720429200 (unix time)
+        - 例: 1720429200000 (unix time, msec)
 
       今日のスケジュールとセンサーの状態から、次に休憩を取る時間を返す。
       ルール:
@@ -22,7 +23,8 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
 
       */
 
-  const schedules = sortAndRemoveLongEvents(_schedules, 60 * 60 * 4 * 1000);
+  const threshold = _threshold || 60 * 60 * 4 * 1000;
+  const schedules = sortAndRemoveLongEvents(_schedules, threshold);
   // lastBreakからworkDuration分後をnextBreakの初期候補とする
   let nextBreak = lastBreak + workDuration;
   // nextBreakが現在時刻よりも前の場合は、現在時刻をnextBreakの候補とする
@@ -69,9 +71,9 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
     }
   }
 
+  // nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
   // nextBreakがlastBreakから1.5 * workDuration以上経過している場合は、schedulesのスタート時刻のbreakDuration前をnextBreakの候補とするが
   // ただし、候補の時刻が現在時刻よりも前の場合は現在時刻とする
-  // nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
   if (nextBreak - lastBreak > workDuration * 2) {
     nextBreak = lastBreak + breakDuration;
   } else if (nextBreak - lastBreak > workDuration * 1.5) {
@@ -100,11 +102,13 @@ const sortAndRemoveLongEvents = (schedules, threshold) => {
   });
 };
 
-const getLocalTimeString = (unixTime) => {
+const getLocalTimeStringRoundUpSeconds = (unixTime, _locale, _timeZone) => {
   const date = new Date(unixTime);
+  const locale = _locale || 'ja-JP';
+  const targetTimeZone = _timeZone || 'Asia/Tokyo';
   date.setSeconds(date.getSeconds() + 60 - date.getSeconds() % 60);
-  return date.toLocaleString('ja-JP', {
-    timeZone: 'Asia/Tokyo',
+  return date.toLocaleString(locale, {
+    timeZone: targetTimeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -113,4 +117,4 @@ const getLocalTimeString = (unixTime) => {
   });
 };
 
-module.exports = { getNotifyTimeToTakeBreak, getLocalTimeString };
+module.exports = { getNotifyTimeToTakeBreak, getLocalTimeStringRoundUpSeconds };
