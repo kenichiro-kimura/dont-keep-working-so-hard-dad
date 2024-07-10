@@ -1,9 +1,17 @@
 const defaultCompareFunction = (a, b) => a.status === b;
 
 const getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times, _compareFunction) => {
-  // sensorStatusHistoryの中でstatusがstatusである状態がtimes回以上続いた部分を探し、その最初のunixtimeと最後のunixtimeを返す
-  // times回以上続いた部分がない場合はundefinedを返す
-  // 最初に見つかった該当するシーケンスの情報を返す
+  /*
+   sensorStatusHistoryの中でstatusがstatusである状態がtimes回以上続いた部分を探し、その最初のunixtimeと最後のunixtimeを返す
+   times回以上続いた部分がない場合はundefinedを返す
+   最初に見つかった該当するシーケンスの情報を返す
+
+   @param {Array} sensorStatusHistory - センサーステータスの履歴
+   @param {string} Any - 検索するステータス
+   @param {number} times - 連続する回数
+   @param {function} [_compareFunction] - 比較関数,デフォルトはa.status === b
+   @return {object} - { startTime: unixTime, endTime: unixTime }
+   */
   const compareFunction = _compareFunction || defaultCompareFunction;
   let count = 0;
   let startTime;
@@ -21,7 +29,7 @@ const getStartTimeAndEndTimeOfSensorStatus = (sensorStatusHistory, status, times
       count = 0;
     }
   }
-  // startTimeとendTimeとendTimeのインデックスを返す
+  // startTimeとendTimeとendTimeを返す
   return startTime === undefined ? undefined : { startTime, endTime };
 };
 

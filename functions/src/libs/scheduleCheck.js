@@ -1,27 +1,22 @@
 const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDuration, _threshold) => {
   /*
-      - _schedules: 今日のスケジュール
-        - 例: [ { start: 1720429200000, end: 1720431000000, subject: "ミーティング" } ]
-      - lastBreak: 今日の最後の休憩時間(unix time, msec)
-        - 例: 1720429200000
-      - workDuration: 連続作業時間
-        - 例: 1800000 (msec)
-      - breakDuration: 休憩時間
-        - 例: 300000 (msec)
-      - threshold: イベントの長さの閾値,デフォルト4時間
-        - 例: 14400000 (msec)
-      - return: 通知する時間
-        - 例: 1720429200000 (unix time, msec)
+   今日のスケジュールとセンサーの状態から、次に休憩を取る時間を返す。
+   ルール:
+   - 最後の休憩から workDuration 分後に休憩を取る
+   - schedulesの要素のstartとendの間は休憩を取らない
+   - schedulesの要素と要素の間で workDuration 分以上空いている場合はそこで休憩を取る
+   - 最後の休憩から workDuration * 1.5 分以上経過していれば、schedulesの要素と要素の間が workDuration 分以上空いていなくても休憩を取る
+   - 最後の休憩から workDuration * 2 分以上経過している場合は、イベントの間であっても休憩を取る
 
-      今日のスケジュールとセンサーの状態から、次に休憩を取る時間を返す。
-      ルール:
-      - 最後の休憩から workDuration 分後に休憩を取る
-      - schedulesの要素のstartとendの間は休憩を取らない
-      - schedulesの要素と要素の間で workDuration 分以上空いている場合はそこで休憩を取る
-      - 最後の休憩から workDuration * 1.5 分以上経過していれば、schedulesの要素と要素の間が workDuration 分以上空いていなくても休憩を取る
-      - 最後の休憩から workDuration * 2 分以上経過している場合は、イベントの間であっても休憩を取る
+   @param {Array} _schedules - 今日のスケジュール / 例: [ { start: 1720429200000, end: 1720431000000, subject: "ミーティング" } ]
+   @param {number} lastBreak - 今日の最後の休憩時間(unix time, msec)
+   @param {number} workDuration - 連続作業時間(msec)
+   @param {number} breakDuration - 休憩時間(msec)
+   @param {number} _threshold - イベントの長さの閾値(msec),デフォルト4時間
 
-      */
+   @return {number} - 通知する時間 (unix time, msec)
+
+   */
 
   const threshold = _threshold || 60 * 60 * 4 * 1000;
   const schedules = sortAndRemoveLongEvents(_schedules, threshold);
@@ -94,8 +89,14 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
 };
 
 const sortAndRemoveLongEvents = (schedules, threshold) => {
-  // schedulesを開始時刻の昇順でソートし、thresholdよりも長いイベントを削除する
-  // 引き数で受け取ったschedulesを変更しないように、最初にコピーした新しい配列を作成する。それをソートし、イベントを削除して返す
+  /*
+   schedulesを開始時刻の昇順でソートし、thresholdよりも長いイベントを削除する
+   引き数で受け取ったschedulesを変更しないように、最初にコピーした新しい配列を作成する。それをソートし、イベントを削除して返す
+
+   @parram {Array} schedules - スケジュール
+   @param {number} threshold - イベントの長さの閾値
+   @return {Array} - ソートされたスケジュール
+   */
   const sortedSchedules = [...schedules].sort((a, b) => a.start - b.start);
   return sortedSchedules.filter((schedule) => {
     return schedule.end - schedule.start < threshold;
