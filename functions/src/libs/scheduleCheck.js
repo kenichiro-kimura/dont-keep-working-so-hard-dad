@@ -102,19 +102,4 @@ const sortAndRemoveLongEvents = (schedules, threshold) => {
   });
 };
 
-const getLocalTimeStringRoundUpSeconds = (unixTime, _locale, _timeZone) => {
-  const date = new Date(unixTime);
-  const locale = _locale || 'ja-JP';
-  const targetTimeZone = _timeZone || 'Asia/Tokyo';
-  date.setSeconds(date.getSeconds() + 60 - date.getSeconds() % 60);
-  return date.toLocaleString(locale, {
-    timeZone: targetTimeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-module.exports = { getNotifyTimeToTakeBreak, getLocalTimeStringRoundUpSeconds };
+module.exports = { getNotifyTimeToTakeBreak };

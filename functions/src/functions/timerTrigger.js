@@ -1,5 +1,6 @@
 const { app, input } = require('@azure/functions');
-const { getNotifyTimeToTakeBreak, getLocalTimeStringRoundUpSeconds } = require('../libs/scheduleCheck');
+const { getNotifyTimeToTakeBreak } = require('../libs/scheduleCheck');
+const { getLocalTimeStringRoundUpSeconds } = require('../libs/timeFunction');
 const { getLastStartTimeAndEndTimeOfSensorStatus } = require('../libs/sensorStatus');
 const { sendC2DMessage } = require('../libs/sendMessage');
 
