@@ -4,8 +4,7 @@
   * - 最後の休憩から workDuration 分後に休憩を取る
   * - schedulesの要素のstartとendの間は休憩を取らない
   * - schedulesの要素と要素の間で workDuration 分以上空いている場合はそこで休憩を取る
-  * - 最後の休憩から workDuration * 1.5 分以上経過していれば、schedulesの要素と要素の間が workDuration 分以上空いていなくても休憩を取る
-  * - 最後の休憩から workDuration * 2 分以上経過している場合は、イベントの間であっても休憩を取る
+  * - スケジュールに合わせて調整した結果workDuration * 2 分以上仕事をすることになる場合は、イベントの間であっても lastBreak + workDurationで休憩を取る
   *
   * @param {Array} _schedules - 今日のスケジュール / 例: [ { start: 1720429200000, end: 1720431000000, subject: "ミーティング" } ]
   * @param {number} lastBreak - 今日の最後の休憩時間(unix time, msec)
@@ -72,21 +71,16 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
       nextBreak = candidate1;
     }
   }
-
   /**
-   * nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
-   * nextBreakがlastBreakから1.5 * workDuration以上経過している場合は、schedulesのスタート時刻のworkDuration前をnextBreakの候補とするが
-   * ただし、候補の時刻が現在時刻よりも前の場合は現在時刻とする
+   * nxtBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
    */
   if (nextBreak - lastBreak > workDuration * 2) {
     nextBreak = lastBreak + workDuration;
-  } else if (nextBreak - lastBreak > workDuration * 1.5) {
-    nextBreak = lastBreak + workDuration;
   }
-
   /**
    * nextBreakが現在時刻よりも前の場合は、現在時刻をnextBreakとする
    */
+
   if (nextBreak < Date.now()) {
     nextBreak = Date.now();
   }
