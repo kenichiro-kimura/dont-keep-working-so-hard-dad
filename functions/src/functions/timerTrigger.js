@@ -34,7 +34,7 @@ const cosmosInput = input.cosmosDB({
   connection: 'CosmosDbConnectionSetting'
 });
 
-const cosmosScueduleInput = input.cosmosDB({
+const cosmosScheduleInput = input.cosmosDB({
   databaseName,
   containerName: schedulesContainerName,
   sqlQuery: `SELECT * FROM c WHERE c.partitionKey = "${partitionKey}"`,
@@ -47,7 +47,7 @@ const cosmosScueduleInput = input.cosmosDB({
 app.timer('timerTrigger', {
   schedule: '0 */5 0-9 * * 1-5',
   runOnStartup: true,
-  extraInputs: [cosmosInput, cosmosScueduleInput],
+  extraInputs: [cosmosInput, cosmosScheduleInput],
   handler: (myTimer, context) => {
     /**
      * センサーデータはIoTHubからCosmos DBへのルーティングで以下のように格納される
@@ -74,7 +74,7 @@ app.timer('timerTrigger', {
      * スケジュールの情報も、start/endを内部処理用にmsecに変換して、startの昇順でソートする
      */
     const sensorStatusHistory = [...context.extraInputs.get(cosmosInput).map((x) => { return { unixTime: x.Body.unixTime * 1000, distance: x.Body.distance }; })].sort((a, b) => a.unixtime - b.unixtime);
-    const schedules = [...context.extraInputs.get(cosmosScueduleInput).map((x) => { return { start: x.start * 1000, end: x.end * 1000, subject: x.subject }; })].sort((a, b) => a.start - b.start);
+    const schedules = [...context.extraInputs.get(cosmosScheduleInput).map((x) => { return { start: x.start * 1000, end: x.end * 1000, subject: x.subject }; })].sort((a, b) => a.start - b.start);
 
     if (process.env.DEBUG === 1) {
       for (const sensorStatus of sensorStatusHistory) {
