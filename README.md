@@ -15,6 +15,7 @@ IoTデバイスを使って、リモートで父親の作業状況を監視し�
 - `functions`: クラウド側のプログラム(Azure Functions/Node.js)
 - `iac`: インフラ構築のためのコード(Bicep)
 - `documents`: ドキュメント
+- `web`: デモのためにスケジュールを表示するWebページ。表示には[jquery-skeduler](https://github.com/decease/jquery-skeduler)を利用
 
 ## タイトル元ネタ
 
