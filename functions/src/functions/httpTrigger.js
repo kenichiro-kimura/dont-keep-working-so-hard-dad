@@ -13,8 +13,6 @@ const month = (today.getUTCMonth() + 1).toString().padStart(2, '0');
 const day = today.getUTCDate().toString().padStart(2, '0');
 const partitionKey = `${year}-${month}-${day}`;
 const targetDevice = process.env.IoTHuBDeviceId;
-console.log(`targetDevice: ${targetDevice}`);
-console.log(`partitionKey: ${partitionKey}`);
 
 const databaseName = process.env.databaseName ? process.env.databaseName : 'DontKeepWorkingSoHardDad';
 const sensorDataContainerName = process.env.sensorDataContainerName ? process.env.sensorDataContainerName : 'SensorData';
@@ -44,10 +42,10 @@ app.http('Schedules', {
   handler: async (request, context) => {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const schedules = [...context.extraInputs.get(cosmosScheduleInput).map((x) => { return { start: x.start, end: x.end * 1000, subject: '******' }; })].sort((a, b) => a.start - b.start);
-    console.log(schedules);
+    const schedules = [...context.extraInputs.get(cosmosScheduleInput).map((x) => { return { start: x.start, end: x.end, subject: '******' }; })].sort((a, b) => a.start - b.start);
     const response = new HttpResponse({ body: JSON.stringify(schedules) });
     response.headers.set('content-type', 'application/json');
+    response.headers.set('Access-Control-Allow-Origin', '*');
     return response;
   }
 });
@@ -63,6 +61,7 @@ app.http('SensorStatusHistory', {
 
     const response = new HttpResponse({ body: JSON.stringify(sensorStatusHistory) });
     response.headers.set('content-type', 'application/json');
+    response.headers.set('Access-Control-Allow-Origin', '*');
     return response;
   }
 });
