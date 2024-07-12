@@ -7,14 +7,15 @@
 ## プロジェクト概要
 
 IoTデバイスを使って、リモートで父親の作業状況を監視し、適切なタイミングで休憩を促すシステムです。  
-デバイスの情報だけでなく、父親のスケジュールや作業状況を考慮して、休憩を促します。
+デバイスの情報だけでなく、父親のスケジュールを考慮して、休憩を促します。
 
 ## プロジェクト構成
 
-- `device`: デバイス側のプログラム
-- `functions`: クラウド側のプログラム(Azure Functions)
+- `device`: デバイス側のプログラム(M5Stack + [Grove Ultrasonic Ranger](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/))
+- `functions`: クラウド側のプログラム(Azure Functions/Node.js)
 - `iac`: インフラ構築のためのコード(Bicep)
+- `documents`: ドキュメント
 
 ## タイトル元ネタ
 
-[Don't Be Shy, Zenigata]()https://www.youtube.com/watch?v=5sJQIFRTuA8
+[Don't Be Shy, Zenigata](https://www.youtube.com/watch?v=5sJQIFRTuA8)
