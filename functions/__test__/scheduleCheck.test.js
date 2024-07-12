@@ -54,7 +54,7 @@ describe('getNotifyTimeToTakeBreak', () => {
     const lastBreak = new Date('2023-04-01T10:00:00Z').getTime();
     const workDuration = 1800 * 1000; // 30 minutes
     const breakDuration = 300 * 1000; // 5 minutes
-    const schedules = [{ start: lastBreak, end: lastBreak + 1600 * 1000, subject: 'Meeting' }, { start: lastBreak + workDuration, end: lastBreak + workDuration * 2, subject: 'Meeting' }];
+    const schedules = [{ start: lastBreak, end: lastBreak + 1560 * 1000, subject: 'Meeting' }, { start: lastBreak + workDuration, end: lastBreak + workDuration * 2, subject: 'Meeting' }];
     const expected = schedules[0].end;
     expect(getNotifyTimeToTakeBreak(schedules, lastBreak, workDuration, breakDuration)).toBe(expected);
   });
