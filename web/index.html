@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>チャートとグラフ</title>
+    <script
+    src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+    crossorigin="anonymous"></script>
+    <script src="jquery-skeduler/jquery.skeduler.min.js"></script>
+    <link rel="stylesheet" href="jquery-skeduler/jquery.skeduler.min.css" type="text/css">
+    <style>
+        .skeduler-container {
+          margin: 50px 0 0 100px;
+          width: 700px;
+          height: 700px;
+          overflow: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="skeduler-container"></div>
+    <script>
+        async function fetchData(url) {
+            const response = await fetch(url);
+            return response.json();
+        }
+
+        async function schedule() {
+            var schedules = await fetchData('http://localhost:7071/api/Schedules');
+            console.log(schedules);
+            var tasks = [...schedules.map((x) => { return { startTime: new Date(x.start * 1000).getHours(), duration: (x.end - x.start) / 60 / 60, column: 0, title: x.subject}})];
+            console.log(tasks);
+            $("#skeduler-container").skeduler({
+                headers: ["Specialist 1"],
+                tasks: tasks,
+                cardTemplate: '<div><div>${title}</div>'
+            });
+        }
+
+        schedule();
+    </script>
+</body>
+
+</html>
