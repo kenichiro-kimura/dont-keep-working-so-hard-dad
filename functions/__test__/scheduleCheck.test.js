@@ -39,33 +39,23 @@ describe('getNotifyTimeToTakeBreak', () => {
     expect(getNotifyTimeToTakeBreak(schedules, lastBreak, workDuration, breakDuration)).toBe(expected);
   });
 
-  test('次の休憩時間候補 + breakDurationがイベント中の場合、そのイベントの開始時刻 - breakDurationを次の休憩時刻として返す', () => {
+  test('休憩時間候補がイベント中だった場合にイベント終了時刻に調整したが、workDurationの2倍以上働くことになる場合はそのイベント開始時刻のbreakDuration前を返す', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-04-01T10:00:00Z').getTime());
     const lastBreak = new Date('2023-04-01T10:00:00Z').getTime();
     const workDuration = 1800 * 1000; // 30 minutes
     const breakDuration = 300 * 1000; // 5 minutes
-    const schedules = [{ start: lastBreak + 1800 * 1000 + 300 * 1000, end: lastBreak + 1800 * 1000 + 5 * 600 * 1000, subject: 'Meeting' }];
+    const schedules = [{ start: lastBreak + workDuration, end: lastBreak + workDuration * 2, subject: 'Meeting' }];
     const expected = schedules[0].start - breakDuration;
     expect(getNotifyTimeToTakeBreak(schedules, lastBreak, workDuration, breakDuration)).toBe(expected);
   });
 
-  test('次の休憩時間候補をイベントの開始時刻にしたが、それが前のスケジュール中だった場合は前のスケジュールの終了時刻を次の休憩時刻として返す', () => {
+  test('次の休憩時間候補をイベントの開始時刻の前にしたが、それが前のスケジュール中だった場合は前のスケジュールの終了時刻を次の休憩時刻として返す', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-04-01T10:00:00Z').getTime());
     const lastBreak = new Date('2023-04-01T10:00:00Z').getTime();
     const workDuration = 1800 * 1000; // 30 minutes
     const breakDuration = 300 * 1000; // 5 minutes
-    const schedules = [{ start: lastBreak, end: lastBreak + 1800 * 1000, subject: 'Meeting' }, { start: lastBreak + 1800 * 1000 + 300 * 1000, end: lastBreak + 1800 * 1000 + 5 * 600 * 1000, subject: 'Meeting' }];
+    const schedules = [{ start: lastBreak, end: lastBreak + 1600 * 1000, subject: 'Meeting' }, { start: lastBreak + workDuration, end: lastBreak + workDuration * 2, subject: 'Meeting' }];
     const expected = schedules[0].end;
-    expect(getNotifyTimeToTakeBreak(schedules, lastBreak, workDuration, breakDuration)).toBe(expected);
-  });
-
-  test('休憩時間候補がイベント中だった場合にイベント終了時刻に調整したが、workDurationの2倍以上働くことになる場合は前回終了時刻+workDurationを返す', () => {
-    jest.useFakeTimers().setSystemTime(new Date('2023-04-01T10:00:00Z').getTime());
-    const lastBreak = new Date('2023-04-01T10:00:00Z').getTime();
-    const workDuration = 1800 * 1000; // 30 minutes
-    const breakDuration = 300 * 1000; // 5 minutes
-    const schedules = [{ start: lastBreak + workDuration, end: lastBreak + workDuration * 2 + 1000, subject: 'Meeting' }];
-    const expected = lastBreak + workDuration;
     expect(getNotifyTimeToTakeBreak(schedules, lastBreak, workDuration, breakDuration)).toBe(expected);
   });
 

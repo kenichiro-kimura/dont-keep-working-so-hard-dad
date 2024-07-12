@@ -3,9 +3,9 @@
   *
   * ルール:
   * - 最後の休憩から workDuration 分後に休憩を取る
-  * - schedulesの要素のstartとendの間は休憩を取らない
-  * - schedulesの要素と要素の間で workDuration 分以上空いている場合はそこで休憩を取る
-  * - スケジュールに合わせて調整した結果workDuration * 2 分以上仕事をすることになる場合は、イベントの間であっても lastBreak + workDurationで休憩を取る
+  * - イベントの間は休憩を取らず、イベント終了後に休憩を取る
+  * - イベント終了後まで働くとworkDuration * 2 分以上仕事をすることになる場合は、イベントの前に休みを取る
+  * - イベント前に休もうとしたが前のイベントとの間がbreakDurationより短い場合は前のイベントの終了時刻から休憩を取る
   *
   * @param {Array} _schedules - 今日のスケジュール / 例: [ { start: 1720429200000, end: 1720431000000, subject: "ミーティング" } ]
   * @param {number} lastBreak - 今日の最後の休憩時間(unix time, msec)
@@ -33,51 +33,27 @@ const getNotifyTimeToTakeBreak = (_schedules, lastBreak, workDuration, breakDura
   /**
    * nextBreakがschedulesのイベントの間にある場合は、イベントの終了時刻をnextBreakの候補とする
    */
-  for (const schedule of schedules) {
-    const start = new Date(schedule.start).getTime();
-    const end = new Date(schedule.end).getTime();
+  for (let i = 0; i < schedules.length; i++) {
+    const start = new Date(schedules[i].start).getTime();
+    const end = new Date(schedules[i].end).getTime();
     if (start <= nextBreak && nextBreak <= end) {
       nextBreak = end;
+      /**
+       * イベント終了時刻まで働くと workDuration * 2以上働いてしまう場合は、イベント前に休憩を取る
+       */
+      if (nextBreak - lastBreak >= workDuration * 2) {
+        nextBreak = start - breakDuration;
+        /**
+        * nextBreakをずらした結果、前のイベントの最中になった場合は前のイベントの終了時刻を休憩開始時刻とする
+        */
+        if (i > 0 && nextBreak < schedules[i - 1].end) {
+          nextBreak = schedules[i - 1].end;
+        }
+      }
       break;
     }
   }
 
-  /**
-   * nextBreak + breakDurationがschedulesのイベントの間にある場合は、イベントの開始時刻 - breakDurationをnextBreakの候補とする
-   * ただし、そのイベントの前のイベントの終了時刻がnextBreakよりも早い場合は、そのイベントの終了時刻をnextBreakの候補とする
-   */
-  let candidate1;
-  let candidate2;
-  for (let i = 0; i < schedules.length; i++) {
-    const start = new Date(schedules[i].start).getTime();
-    const end = new Date(schedules[i].end).getTime();
-    if (start <= nextBreak + breakDuration && nextBreak + breakDuration <= end) {
-      candidate1 = start - breakDuration;
-      if (i > 0) {
-        const beforeEnd = new Date(schedules[i - 1].end).getTime();
-        if (beforeEnd < nextBreak) {
-          candidate2 = beforeEnd;
-        }
-      }
-    }
-  }
-  if (candidate1 !== undefined) {
-    if (candidate2 !== undefined) {
-      if (candidate2 < Date.now()) {
-        nextBreak = candidate2;
-      } else {
-        nextBreak = candidate1;
-      }
-    } else {
-      nextBreak = candidate1;
-    }
-  }
-  /**
-   * nextBreakがlastBreakから2 * workDuration以上経過している場合は、lastBreak + breakDurationをnextBreakの候補とする
-   */
-  if (nextBreak - lastBreak > workDuration * 2) {
-    nextBreak = lastBreak + workDuration;
-  }
   /**
    * nextBreakが現在時刻よりも前の場合は、現在時刻をnextBreakとする
    */
