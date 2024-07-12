@@ -14,6 +14,7 @@ IoTデバイスを使って、リモートで父親の作業状況を監視し�
 - `device`: デバイス側のプログラム(M5Stack + [Grove Ultrasonic Ranger](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/))
 - `functions`: クラウド側のプログラム(Azure Functions/Node.js)
 - `iac`: インフラ構築のためのコード(Bicep)
+- `documents`: ドキュメント
 
 ## タイトル元ネタ
 
