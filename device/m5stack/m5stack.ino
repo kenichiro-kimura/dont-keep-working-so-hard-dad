@@ -1,10 +1,12 @@
+
 /*
  * based on https://github.com/yuuu/m5stack-soracom-arc
  */
+#include <M5Stack.h>
 #include <Ultrasonic.h>
 #include <PubSubClient.h>
-#include <M5Stack.h>
 #include <HTTPClient.h>
+#include <ArduinoHttpClient.h>
 #include <EEPROM.h>
 #include <WiFi.h>
 #include <WiFiManager.h>
@@ -12,6 +14,7 @@
 
 #define SENSOR_NAME "dwshd-sensor1"
 #define SENSOR_UPDATE_INTERVAL 60
+#define SENSOR_DISTANCE_THRESHOLD 100
 
 Ultrasonic sonar(22);
 WiFiClient net;
@@ -234,7 +237,7 @@ void setupMqtt() {
 void setup()
 {
   sprintf(subscribe_channel,"devices/%s/messages/devicebound/#",SENSOR_NAME);
-  sprintf(publish_channel,"devices/%s/messages/events/$.ct=application%2Fjson%3Bcharset%3Dutf-8",SENSOR_NAME);
+  sprintf(publish_channel,"devices/%s/messages/events/$.ct=application%%2Fjson%%3Bcharset%%3Dutf-8",SENSOR_NAME);
 
   Params params;
   memset(&params, 0, sizeof(params));
@@ -256,6 +259,15 @@ void setup()
   Serial.println("go start");
 }
 
+void sendUnifiedEndpoint(long _distance,long _now){
+  char uniMessage[256];
+  sprintf(uniMessage,"{\"distance\": %d,\"unixTime\": %d,\"threshold\": %d}",_distance,_now,SENSOR_DISTANCE_THRESHOLD);
+  HttpClient http = HttpClient(net, "uni.soracom.io", 80);
+  http.post("/", "application/json", uniMessage);
+  Serial.print(F("responseStatusCode(): "));
+  Serial.println(http.responseStatusCode());
+  http.stop();
+}
 void loop()
 {
   client.loop();
@@ -280,6 +292,8 @@ void loop()
       Serial.print("send ");
       Serial.println(message);
       distanceSum = 0;
+      // send unified endpoint
+      sendUnifiedEndpoint(distance,now);
     } else {
       Serial.print("distance: ");
       Serial.println(distance);
