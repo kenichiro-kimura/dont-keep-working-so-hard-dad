@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "textlint": "textlint --rule azure-product-name **/*.md"
+  },
+  "devDependencies": {
+    "textlint": "^14.0.4",
+    "textlint-rule-azure-product-name": "^1.4.0"
+  }
+}
