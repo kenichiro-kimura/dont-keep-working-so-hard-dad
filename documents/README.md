@@ -12,13 +12,13 @@
   - SORACOM BeamにMQTTでサブスクライブし、受信した次の休憩開始時刻を表示する
 - SORACOM
   - SORACOM Arcで接続されたM5Stack Basicからセンサーデータを取得する
-  - SORACOM BeamがデータをMQTTで受信してAzure IoTHubにMQTTSでpublishする
-  - SORACOM BeamがsubscribeしたIoTHubからデータを取得し、MQTTでM5 Stack Basicに送信する
+  - SORACOM BeamがデータをMQTTで受信してAzure IoT HubにMQTTSでpublishする
+  - SORACOM BeamがsubscribeしたIoT Hubからデータを取得し、MQTTでM5 Stack Basicに送信する
 - Microsoft Azure
-  - IoTHubがMQTTSでSORACOM Beamからセンサーデータを取得する
-  - IoTHubは受信したデータをCosmos DBにルーティングする
+  - IoT HubがMQTTSでSORACOM Beamからセンサーデータを取得する
+  - IoT Hubは受信したデータをCosmos DBにルーティングする
   - Cosmos DBはセンサーデータと本日の予定データを保存する
-  - FuncitonsのtimerTrigger関数が平日の9時～18時の間5分おきに起動する。Cosmos DBのデータを取得し、ルールに基づいて次の休憩時刻を算出し、IoTHubのCloud2Device Message機能を用いてSORACOM Beamに送信する
+  - FuncitonsのtimerTrigger関数が平日の9時～18時の間5分おきに起動する。Cosmos DBのデータを取得し、ルールに基づいて次の休憩時刻を算出し、IoT HubのCloud2Device Message機能を用いてSORACOM Beamに送信する
 - Power Automate
   - 平日の毎日9時に起動し、Microsoft365のOutlookに接続して当日の予定データを取得し、Cosmos DBに保存する
 
