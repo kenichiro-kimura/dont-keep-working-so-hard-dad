@@ -89,7 +89,7 @@ app.timer('timerTrigger', {
     const consecutiveTimes = process.env.consecutiveTimes ? process.env.consecutiveTimes : 5;
 
     /**
-     * sensorStatusHistoryの中で、最後にdistanceがdistanceThreshold以上になった時間を取得する
+     * sensorStatusHistoryの中で、最後にdistanceがconsecutiveTimes回以上連続でdistanceThreshold以上になった時間を取得する
      * sensorStatusHistoryのデータと、引き数で渡したdistanceThresholdの比較関数は a.distance >= b 。この場合のaがsensorStatusHistoryの要素、bがdistanceThresholdとなる
      */
     const lastBreak = getLastStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory, distanceThreshold, consecutiveTimes, (a, b) => a.distance >= b);
