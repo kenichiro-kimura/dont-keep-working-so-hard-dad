@@ -11,12 +11,12 @@
 #include <WiFi.h>
 #include <WiFiManager.h>
 #include <WireGuard-ESP32.h>
-
+#include "lwip/dns.h"
 #define SENSOR_NAME "dwshd-sensor1"
 #define SENSOR_UPDATE_INTERVAL 60
 #define SENSOR_DISTANCE_THRESHOLD 100
 
-Ultrasonic sonar(22);
+Ultrasonic sonar(2);
 WiFiClient net;
 PubSubClient client = PubSubClient(net);
 char buffer[1024];
@@ -183,6 +183,13 @@ void setupWifi(Params* params)
   {
     showMessage("Wi-Fi failed.");
     for(;;);    
+  }
+  for (int i=0;i<DNS_MAX_SERVERS;i++){
+    if(WiFi.dnsIP(i) == IPAddress(0,0,0,0)){
+      ip_addr_t dnsserver = IPADDR4_INIT_BYTES(100,127,0,53);
+      dns_setserver(1,&dnsserver);
+      break;
+    }
   }
   showMessage("Wi-Fi connected.");
 }
