@@ -3,3 +3,6 @@ __azurite_*
 __blobstorage__*
 __queuestorage__*
 node_modules
+
+# serverless framework
+.serverless
