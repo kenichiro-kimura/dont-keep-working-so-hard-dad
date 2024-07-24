@@ -1,8 +1,8 @@
 const { getNextBreakTime } = require('dkwshd');
 
 exports.run = async () => {
-  const sensorStatusHistory = [];
-  const schedules = [];
+  const sensorStatusHistory = await getSensorStatusHistory();
+  const schedules = await getSchedules();
   const distanceThreshold = process.env.distanceThreshold ? process.env.distanceThreshold : 100;
   const consecutiveTimes = process.env.consecutiveTimes ? process.env.consecutiveTimes : 5;
   const breakDuration = (process.env.breakDuration ? process.env.breakDuration : 300) * 1000;
@@ -15,6 +15,26 @@ exports.run = async () => {
   /**
    * IoTCoreにメッセージを送信
    */
+};
+
+const getSensorStatusHistory = () => {
+  return [];
+};
+
+const getSchedules = async () => {
+  const url = process.env.schedulesUrl;
+
+  if (url === undefined) {
+    return [];
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    console.error('Network response was not ok');
+    return [];
+  } else {
+    return response.json();
+  }
 };
 
 exports.run();
