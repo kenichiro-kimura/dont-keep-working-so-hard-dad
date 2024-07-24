@@ -50,7 +50,7 @@ const getSensorStatusHistory = async () => {
   };
   const paginator = paginateQuery(paginatorConfig, {
     TableName: tableName,
-    KeyConditionExpression: 'PartitionKey = :PartitionKey',
+    KeyConditionExpression: 'partitionKey = :PartitionKey',
     ExpressionAttributeValues: {
       ':PartitionKey': `${targetDevice}-${partitionKey}`
     }
