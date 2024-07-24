@@ -1,4 +1,4 @@
-const { getStartTimeAndEndTimeOfSensorStatus, getLastStartTimeAndEndTimeOfSensorStatus } = require('../src/libs/sensorStatus');
+const { getStartTimeAndEndTimeOfSensorStatus, getLastStartTimeAndEndTimeOfSensorStatus } = require('../libs/sensorStatus');
 
 const compareIsEqual = (a, b) => {
   return a.status === b;
