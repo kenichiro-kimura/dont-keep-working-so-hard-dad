@@ -1,6 +1,4 @@
-const { getNotifyTimeToTakeBreak } = require('libs/scheduleCheck');
-const { getLocalTimeStringRoundUpSeconds } = require('libs/timeFunction');
-const { getLastStartTimeAndEndTimeOfSensorStatus } = require('libs/sensorStatus');
+const { getNotifyTimeToTakeBreak, getLocalTimeStringRoundUpSeconds, getLastStartTimeAndEndTimeOfSensorStatus } = require('dkwshd');
 
 exports.run = async () => {
   const time = getLocalTimeStringRoundUpSeconds(new Date().getTime());
