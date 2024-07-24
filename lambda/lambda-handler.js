@@ -22,9 +22,9 @@ const year = today.getUTCFullYear();
 const month = (today.getUTCMonth() + 1).toString().padStart(2, '0');
 const day = today.getUTCDate().toString().padStart(2, '0');
 const partitionKey = `${year}-${month}-${day}`;
-const targetDevice = process.env.IoTHuBDeviceId;
+const targetDevice = process.env.IotCoreDeviceId ? process.env.IotCoreDeviceId : 'dkwshd-sensor1';
 
-const tableName = process.env.tableName ? process.env.tableName : 'SensorData';
+const tableName = process.env.tableName ? process.env.tableName : 'dkwshd-sensor-data';
 
 exports.run = async () => {
   const sensorStatusHistory = await getSensorStatusHistory();
