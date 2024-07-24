@@ -8,6 +8,37 @@ provider:
   runtime: nodejs20.x
   region: ap-northeast-1
   profile: default
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - iot:Publish
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+          Resource: { "Fn::GetAtt": ["SensorDataTable", "Arn"] }
+
+resources:
+  Resources:
+    SensorDataTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dkwshd-sensor-data
+        AttributeDefinitions:
+          - AttributeName: partitionKey
+            AttributeType: S
+          - AttributeName: unixTime
+            AttributeType: N
+        KeySchema:
+          - AttributeName: partitionKey
+            KeyType: HASH
+          - AttributeName: unixTime
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 functions:
   rateHandler:
