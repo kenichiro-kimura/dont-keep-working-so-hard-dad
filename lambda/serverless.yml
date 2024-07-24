@@ -17,7 +17,7 @@ provider:
           Resource: "*"
         - Effect: Allow
           Action:
-            - dynamodb:PutItem
+            - dynamodb:GetItem
           Resource: { "Fn::GetAtt": ["SensorDataTable", "Arn"] }
 
 resources:
