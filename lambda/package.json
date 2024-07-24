@@ -9,6 +9,8 @@
   "author": "kenichiro-kimura",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.616.0",
+    "@aws-sdk/lib-dynamodb": "^3.616.0",
     "dkwshd": "file:../common-lib"
   }
 }
