@@ -1,6 +1,7 @@
 const { getNextBreakTime } = require('dkwshd');
 const { DynamoDBDocumentClient, paginateQuery } = require('@aws-sdk/lib-dynamodb');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { sendC2DMessage } = require('./libs/sendMessage');
 
 const marshallOptions = {
   // Whether to automatically convert empty strings, blobs, and sets to `null`.
@@ -22,7 +23,7 @@ const year = today.getUTCFullYear();
 const month = (today.getUTCMonth() + 1).toString().padStart(2, '0');
 const day = today.getUTCDate().toString().padStart(2, '0');
 const partitionKey = `${year}-${month}-${day}`;
-const targetDevice = process.env.IotCoreDeviceId ? process.env.IotCoreDeviceId : 'dkwshd-sensor1';
+const targetDevice = process.env.IotCoreDeviceId ? process.env.IotCoreDeviceId : 'dwshd-sensor1';
 
 const tableName = process.env.tableName ? process.env.tableName : 'dkwshd-sensor-data';
 
@@ -41,8 +42,14 @@ exports.run = async () => {
   /**
    * IoTCoreにメッセージを送信
    */
+
+  sendC2DMessage('toNotify');
 };
 
+/**
+ *
+ * @return {Array} - センサーステータスの履歴
+ */
 const getSensorStatusHistory = async () => {
   const paginatorConfig = {
     client: dynamo,
@@ -63,6 +70,10 @@ const getSensorStatusHistory = async () => {
   return items;
 };
 
+/**
+ *
+ * @return {Array} - スケジュール
+ */
 const getSchedules = async () => {
   const url = process.env.schedulesUrl;
 
