@@ -14,7 +14,7 @@ provider:
         - Effect: Allow
           Action:
             - iot:Publish
-          Resource: "*"
+          Resource: { "Fn::GetAtt": ["SernsorThing", "Arn"] }
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -22,6 +22,47 @@ provider:
 
 resources:
   Resources:
+    SensorDataRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - iot.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Policies:
+          - PolicyName: SensorDataPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                  Resource: { "Fn::GetAtt": ["SensorDataTable", "Arn"] }
+
+    SernsorThing:
+      Type: AWS::IoT::Thing
+      Properties:
+        ThingName: dkwshd-sensor1
+
+    SensorDataRule:
+      Type: AWS::IoT::TopicRule
+      Properties:
+        RuleName: dkwshd_sensor_data_rule
+        TopicRulePayload:
+          Actions:
+            - DynamoDBv2:
+                RoleArn: { "Fn::GetAtt": ["SensorDataRole", "Arn"] }
+                PutItem:
+                  TableName: { "Fn::GetAtt": ["SensorDataTable", "Arn"] }
+          AwsIotSqlVersion: "2016-03-23"
+          Sql: "SELECT concat(topic(2),'-',parse_time(\"yyyy-MM-dd\",timestamp(), 'UTC')) AS partitionKey, unixTime, distance FROM 'devices/+/messages/events/#'"
+          RuleDisabled: false
+
     SensorDataTable:
       Type: AWS::DynamoDB::Table
       Properties:
