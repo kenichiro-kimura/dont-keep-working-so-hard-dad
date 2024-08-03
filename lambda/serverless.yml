@@ -14,10 +14,13 @@ provider:
         - Effect: Allow
           Action:
             - iot:Publish
-          Resource: { "Fn::GetAtt": ["SernsorThing", "Arn"] }
+            - iot:Subscribe
+            - iot:Connect
+          Resource: '*'
         - Effect: Allow
           Action:
             - dynamodb:GetItem
+            - dynamodb:Query
           Resource: { "Fn::GetAtt": ["SensorDataTable", "Arn"] }
 
 resources:
