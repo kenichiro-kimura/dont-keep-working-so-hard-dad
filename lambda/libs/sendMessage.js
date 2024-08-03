@@ -2,7 +2,7 @@ const { mqtt5, iot } = require('aws-iot-device-sdk-v2');
 const { once } = require('events');
 
 const iotCoreEndpoint = process.env.iotCoreEndpoint;
-const targetDevice = process.env.IoTHuBDeviceId;
+const targetDevice = process.env.IotCoreDeviceId ? process.env.IotCoreDeviceId : 'dwshd-sensor1';
 
 /**
  * IoT CoreにIoT Hub互換のC2Dメッセージを送信する
