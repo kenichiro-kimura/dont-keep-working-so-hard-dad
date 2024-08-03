@@ -43,7 +43,7 @@ exports.run = async () => {
    * IoTCoreにメッセージを送信
    */
 
-  sendC2DMessage('toNotify');
+  await sendC2DMessage(toNotify);
 };
 
 /**
@@ -89,5 +89,3 @@ const getSchedules = async () => {
     return response.json();
   }
 };
-
-exports.run();
