@@ -86,6 +86,12 @@ resources:
 
 functions:
   rateHandler:
-    handler: lambda-handler.run
+    handler: timerTrigger.timer
     events:
-      - schedule: rate(1 minute)
+      - schedule: cron(0/5 0-9 ? * MON-FRI *)
+  api:
+    handler: httpTrigger.httpSensorStatusHistory
+    events:
+      - httpApi:
+          path: /SensorStatusHistory
+          method: get
