@@ -13,9 +13,8 @@ IoTデバイスを使って、父親の作業状況を監視し、適切なタ�
 
 - `device`: デバイス側のプログラム(M5Stack + [Grove Ultrasonic Ranger](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/))
 - `functions`: クラウド側のプログラム(Azure Functions/Node.js)
-- `lambda`: クラウド側のプログラム(AWS Lambda/Node.js)
+- `lambda`: クラウド側のプログラム(AWS Lambda/Node.js)。デプロイには[serverless framework](https://www.serverless.com/)を利用。
 - `common-lib`: `funcitons`と`lambda`で利用する共通ライブラリ
-- `iac`: インフラ構築のためのコード(Bicep)
 - `documents`: ドキュメント
 - `web`: デモのためにスケジュールを表示するWebページ。表示には[jquery-skeduler](https://github.com/decease/jquery-skeduler)を利用
 
