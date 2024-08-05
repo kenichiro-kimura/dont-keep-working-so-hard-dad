@@ -2,7 +2,7 @@
 
 ## 概要
 
-2024/7/17に開催される、SORACOM Discovery 2024での企画「Call for IoTプロトタイピングby SORACOM UG」に提出する作品です。
+2024/7/17に開催された、SORACOM Discovery 2024での企画「Call for IoTプロトタイピングby SORACOM UG」に提出した作品です。
 
 ## プロジェクト概要
 
@@ -13,6 +13,8 @@ IoTデバイスを使って、父親の作業状況を監視し、適切なタ�
 
 - `device`: デバイス側のプログラム(M5Stack + [Grove Ultrasonic Ranger](https://wiki.seeedstudio.com/Grove-Ultrasonic_Ranger/))
 - `functions`: クラウド側のプログラム(Azure Functions/Node.js)
+- `lambda`: クラウド側のプログラム(AWS Lambda/Node.js)
+- `common-lib`: `funcitons`と`lambda`で利用する共通ライブラリ
 - `iac`: インフラ構築のためのコード(Bicep)
 - `documents`: ドキュメント
 - `web`: デモのためにスケジュールを表示するWebページ。表示には[jquery-skeduler](https://github.com/decease/jquery-skeduler)を利用

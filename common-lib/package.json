@@ -1,0 +1,12 @@
+{
+  "name": "dkwshd",
+  "version": "1.0.1",
+  "description": "don't keep working so hard, dad",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint --ext .js ./"
+  },
+  "author": "kenichiro-kimura",
+  "license": "MIT"
+}

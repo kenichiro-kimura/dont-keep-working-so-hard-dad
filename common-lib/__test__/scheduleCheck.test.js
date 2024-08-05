@@ -1,4 +1,4 @@
-const { getNotifyTimeToTakeBreak } = require('../src/libs/scheduleCheck');
+const { getNotifyTimeToTakeBreak } = require('../libs/scheduleCheck');
 
 describe('getNotifyTimeToTakeBreak', () => {
   test('スケジュールが無い場合、前回の休憩の終了時刻からworkDuration後の時間を次の休憩時刻として返す', () => {

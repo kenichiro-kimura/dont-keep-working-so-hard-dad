@@ -1,7 +1,5 @@
 const { app, input } = require('@azure/functions');
-const { getNotifyTimeToTakeBreak } = require('../libs/scheduleCheck');
-const { getLocalTimeStringRoundUpSeconds } = require('../libs/timeFunction');
-const { getLastStartTimeAndEndTimeOfSensorStatus } = require('../libs/sensorStatus');
+const { getNextBreakTime } = require('dkwshd');
 const { sendC2DMessage } = require('../libs/sendMessage');
 
 /**
@@ -87,25 +85,10 @@ app.timer('timerTrigger', {
 
     const distanceThreshold = process.env.distanceThreshold ? process.env.distanceThreshold : 100;
     const consecutiveTimes = process.env.consecutiveTimes ? process.env.consecutiveTimes : 5;
-
-    /**
-     * sensorStatusHistoryの中で、最後にdistanceがconsecutiveTimes回以上連続でdistanceThreshold以上になった時間を取得する
-     * sensorStatusHistoryのデータと、引き数で渡したdistanceThresholdの比較関数は a.distance >= b 。この場合のaがsensorStatusHistoryの要素、bがdistanceThresholdとなる
-     */
-    const lastBreak = getLastStartTimeAndEndTimeOfSensorStatus(sensorStatusHistory, distanceThreshold, consecutiveTimes, (a, b) => a.distance >= b);
-    console.log('lastBreak: ' + JSON.stringify(lastBreak));
-
-    /**
-     * 休憩時間(msec)。環境変数にはsecで登録する。
-     */
     const breakDuration = (process.env.breakDuration ? process.env.breakDuration : 300) * 1000;
-    /**
-     * 連続作業時間(msec)。環境変数にはsecで登録する。
-     */
     const workDuration = (process.env.workDuration ? process.env.workDuration : 1800) * 1000;
 
-    const lastBreakTime = lastBreak !== undefined ? lastBreak.endTime : 0;
-    const toNotify = getLocalTimeStringRoundUpSeconds(getNotifyTimeToTakeBreak(schedules, lastBreakTime, workDuration, breakDuration));
+    const toNotify = getNextBreakTime(sensorStatusHistory, schedules, workDuration, breakDuration, distanceThreshold, consecutiveTimes);
 
     console.log(`toNotify: ${toNotify}`);
     context.log('Timer function processed request.');
