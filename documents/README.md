@@ -22,7 +22,7 @@ AWS版
   - SORACOM BeamがデータをMQTTで受信してAzure IoT HubまたはIoT CoreにMQTTSでpublishする
   - SORACOM BeamがsubscribeしたIoT HubまたはIoT Coreからデータを取得し、MQTTでM5 Stack Basicに送信する
 - Microsoft Azure
-  - Cosmos DBはセンサーデータと本日の予定データを保存する
+  - Cosmos DBは本日の予定データを保存する
 - Power Automate
   - 平日の毎日9時に起動し、Microsoft365のOutlookに接続して当日の予定データを取得し、Cosmos DBに保存する
 
@@ -40,7 +40,7 @@ AWS版
   - DynamoDBはセンサーデータを保存する
   - LambdaのtimerTrigger関数が平日の9時～18時の間5分おきに起動する。センサーデータをDynamoDBから、今日の予定データをAzure Functions(HTTP呼び出し)から取得し、ルールに基づいて次の休憩時刻を算出し、IoT CoreにPublishする
 - Microsoft Azure
-  - Cosmos DBはセンサーデータと本日の予定データを保存する
+  - Cosmos DBは本日の予定データを保存する
   - FuncitonsのhttpTriggerはHTTPリクエストを受け取り、Cosmos DBに保存されている本日の予定データを返す
 
 (*)Microsoft365のデータの取得はPower Automateを利用しているため、予定データはAWS版でもAzure Cosmos DBに保存しており、Azure FunctionsのHTTPトリガーを使って取得用APIを準備している。
