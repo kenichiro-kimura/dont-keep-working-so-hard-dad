@@ -88,4 +88,4 @@ functions:
   rateHandler:
     handler: lambda-handler.run
     events:
-      - schedule: rate(1 minute)
+      - schedule: cron(0/5 0-9 ? * MON-FRI *)
