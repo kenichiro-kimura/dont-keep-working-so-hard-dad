@@ -1,0 +1,9 @@
+{
+  "plugins": {},
+  "filters": {},
+  "rules": {
+    "aws-service-name": true,
+    "azure-product-name": true,
+    "soracom-product-name": true
+  }
+}

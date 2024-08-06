@@ -3,7 +3,7 @@
     "test": "jest",
     "lint": "eslint --ext .js ./",
     "prepare": "husky",
-    "textlint": "textlint --rule azure-product-name --rule aws-service-name **/*.md"
+    "textlint": "textlint **/*.md"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
@@ -14,7 +14,8 @@
     "lint-staged": "^15.2.7",
     "textlint": "^14.0.4",
     "textlint-rule-aws-service-name": "^1.10.1",
-    "textlint-rule-azure-product-name": "^1.4.0"
+    "textlint-rule-azure-product-name": "^1.4.0",
+    "textlint-rule-soracom-product-name": "^1.0.1"
   },
   "lint-staged": {
     "*.js": [
